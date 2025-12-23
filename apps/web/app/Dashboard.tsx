@@ -5,6 +5,10 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recha
 import { Card } from "../components/Card";
 import { Pill } from "../components/Pill";
 import { Kpi } from "../components/Kpi";
+import { CorrHeatmap } from "../components/CorrHeatmap";
+import { PcaScree } from "../components/PcaScree";
+import { RiskDeltaTable } from "../components/RiskDeltaTable";
+
 
 type AssetMetric = {
   symbol: string;
@@ -24,6 +28,13 @@ type RegimeMetrics = {
   assets: AssetMetric[];
   corr: { symbols: string[]; data: number[][] };
   cov: { symbols: string[]; data: number[][] };
+  pca?: {
+    eigvals: number[];
+    explainedVar: number[];
+    effectiveBets: number;
+    pc1TopLoadings: { symbol: string; loading: number }[];
+};
+
 };
 
 type RiskPayload = {
@@ -132,6 +143,32 @@ export default function Dashboard({ data }: { data: RiskPayload }) {
           </div>
         </Card>
       </section>
+      <section style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 12, marginTop: 12 }}>
+        <Card title="Correlation heatmap" right={<span style={{ color: "var(--muted)", fontSize: 12 }}>Top risk assets</span>}>
+            <CorrHeatmap corr={m.corr} assets={m.assets} topN={25} />
+        </Card>
+
+        <Card
+            title="PCA explained variance"
+            right={<span style={{ color: "var(--muted)", fontSize: 12 }}>PC 1–20</span>}
+        >
+            <PcaScree explainedVar={m.pca?.explainedVar ?? []} />
+            <div style={{ marginTop: 10, color: "var(--muted)", fontSize: 12 }}>
+            Effective bets: <span style={{ color: "rgba(255,255,255,0.9)", fontWeight: 650 }}>{m.pca?.effectiveBets?.toFixed?.(2) ?? "N/A"}</span>
+            </div>
+        </Card>
+        </section>
+
+        <section style={{ marginTop: 12 }}>
+        <Card title="Stress minus normal risk share deltas">
+            <RiskDeltaTable
+            normal={data.regimes.normal.metrics.assets}
+            stress={data.regimes.stress.metrics.assets}
+            topN={20}
+            />
+        </Card>
+        </section>
+
     </main>
   );
 }

@@ -1,3 +1,11 @@
+# Payload contract v1.0
+# - regimes.{normal,stress}.metrics.assets[*]
+# - regimes.{normal,stress}.metrics.portfolio
+# - regimes.{normal,stress}.metrics.pca
+# - regimes.{normal,stress}.metrics.corr
+#
+# Frontend depends on this shape. Do not change keys without bumping version.
+
 from __future__ import annotations
 
 import json
@@ -61,9 +69,25 @@ def corr_from_cov(cov: np.ndarray) -> np.ndarray:
     np.fill_diagonal(corr, 1.0)
     return corr
 
+def pca_from_cov(cov: np.ndarray):
+    # Eigen decomposition of covariance (symmetric)
+    eigvals, eigvecs = np.linalg.eigh(cov)  # ascending
+    idx = np.argsort(eigvals)[::-1]
+    eigvals = eigvals[idx]
+    eigvecs = eigvecs[:, idx]  # columns are PCs
+
+    total = float(eigvals.sum())
+    explained = (eigvals / total) if total > 0 else np.zeros_like(eigvals)
+
+    # Effective number of bets (diversification metric)
+    enb = float(1.0 / np.sum(explained**2)) if total > 0 else 0.0
+
+    return eigvals, explained, eigvecs, enb
+
 
 def regime_metrics(Rwin: pd.DataFrame, w: np.ndarray):
     X = Rwin.values
+    symbols = list(Rwin.columns)  # define early, used by PCA + asset table
 
     lw = LedoitWolf().fit(X)
     cov = lw.covariance_
@@ -81,8 +105,6 @@ def regime_metrics(Rwin: pd.DataFrame, w: np.ndarray):
     rc = w * mcr
     rshare = rc / rc.sum()
 
-    symbols = list(Rwin.columns)
-
     assets = [
         {
             "symbol": sym,
@@ -94,8 +116,14 @@ def regime_metrics(Rwin: pd.DataFrame, w: np.ndarray):
         for i, sym in enumerate(symbols)
     ]
 
-    # Useful for UI: sorted top contributors
     top = sorted(assets, key=lambda a: a["riskShare"], reverse=True)[:10]
+
+    # PCA + effective bets
+    eigvals, explained, loadings, enb = pca_from_cov(cov)
+
+    pc1 = loadings[:, 0]
+    pc1_load = [{"symbol": symbols[i], "loading": float(pc1[i])} for i in range(len(symbols))]
+    pc1_top = sorted(pc1_load, key=lambda x: abs(x["loading"]), reverse=True)[:15]
 
     return {
         "nObs": int(Rwin.shape[0]),
@@ -105,9 +133,16 @@ def regime_metrics(Rwin: pd.DataFrame, w: np.ndarray):
             "topRiskContributors": top,
         },
         "assets": assets,
+        "pca": {
+            "eigvals": eigvals.tolist(),
+            "explainedVar": explained.tolist(),
+            "effectiveBets": float(enb),
+            "pc1TopLoadings": pc1_top,
+        },
         "cov": {"symbols": symbols, "data": cov.tolist()},
         "corr": {"symbols": symbols, "data": corr.tolist()},
     }
+
 
 
 
