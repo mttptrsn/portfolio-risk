@@ -1,0 +1,29 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Data (never commit raw or processed data)
+data/raw/
+data/processed/
+data/**/*.parquet
+data/**/*.json
+
+# Logs
+logs/
+*.log
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.vercel/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
