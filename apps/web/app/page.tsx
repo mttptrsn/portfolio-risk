@@ -1,23 +1,19 @@
-import { loadRiskOrNull } from "@/lib/loadRisk";
+import Dashboard from "./Dashboard";
+import { fetchLatestRisk } from "../lib/riskFetch";
 
 export default async function Page() {
-  const data = await loadRiskOrNull();
+  const data = await fetchLatestRisk();
 
   if (!data) {
     return (
-      <main style={{ padding: 24 }}>
-        <h1>Portfolio Risk</h1>
-        <p>No published payload found. Check NEXT_PUBLIC_RISK_MANIFEST_URL and publishing.</p>
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: 24 }}>
+        <h1 style={{ fontSize: 30, fontWeight: 700 }}>Portfolio Risk</h1>
+        <p style={{ color: "rgba(255,255,255,0.70)", marginTop: 10 }}>
+          No payload found. Check NEXT_PUBLIC_RISK_MANIFEST_URL, then publish again.
+        </p>
       </main>
     );
   }
 
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Portfolio Risk</h1>
-      <pre style={{ whiteSpace: "pre-wrap" }}>
-        {JSON.stringify({ asOf: data.asOf, n: data.universe?.length }, null, 2)}
-      </pre>
-    </main>
-  );
+  return <Dashboard data={data} />;
 }
