@@ -10,15 +10,13 @@ export function Pill({
   return (
     <button
       onClick={onClick}
-      style={{
-        padding: "8px 12px",
-        borderRadius: 999,
-        border: `1px solid ${active ? "rgba(0,180,255,0.55)" : "var(--stroke)"}`,
-        background: active ? "rgba(0,180,255,0.16)" : "rgba(255,255,255,0.05)",
-        color: "rgba(255,255,255,0.92)",
-        cursor: "pointer",
-        fontSize: 13,
-      }}
+      className={[
+        "rounded-full px-3 py-2 text-sm font-semibold transition",
+        "border",
+        active
+          ? "border-cyan-300/50 bg-cyan-300/15 text-white"
+          : "border-white/10 bg-white/5 text-white/85 hover:bg-white/10",
+      ].join(" ")}
     >
       {label}
     </button>

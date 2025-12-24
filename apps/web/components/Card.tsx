@@ -10,23 +10,13 @@ export function Card({
   className?: string;
 }) {
   return (
-    <section
-      className={className}
-      style={{
-        background: "var(--card)",
-        border: "1px solid var(--stroke)",
-        borderRadius: 18,
-        padding: 16,
-        boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
-        backdropFilter: "blur(10px)",
-      }}
-    >
+    <section className={`surface rounded-2xl p-4 sm:p-5 ${className}`}>
       {(title || right) && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-          <div style={{ fontSize: 13, letterSpacing: 0.6, color: "var(--muted)", textTransform: "uppercase" }}>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-white/60">
             {title}
           </div>
-          <div>{right}</div>
+          <div className="text-xs text-white/60">{right}</div>
         </div>
       )}
       {children}

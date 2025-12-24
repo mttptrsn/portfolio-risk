@@ -1,18 +1,9 @@
 export function Kpi({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div
-      style={{
-        background: "var(--card2)",
-        border: "1px solid var(--stroke)",
-        borderRadius: 16,
-        padding: 14,
-      }}
-    >
-      <div style={{ fontSize: 12, color: "var(--muted)", letterSpacing: 0.4, textTransform: "uppercase" }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 24, marginTop: 8, fontWeight: 650 }}>{value}</div>
-      {sub && <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>{sub}</div>}
+    <div className="surface rounded-2xl p-4 sm:p-5">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-white/60">{label}</div>
+      <div className="mt-2 text-2xl font-semibold tracking-tight text-white/95">{value}</div>
+      {sub ? <div className="mt-2 text-xs text-white/55">{sub}</div> : null}
     </div>
   );
 }

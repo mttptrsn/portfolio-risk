@@ -42,30 +42,31 @@ export function RiskDeltaTable({
   }, [normal, stress, topN]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      {rows.map((r) => (
-        <div
-          key={r.symbol}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "70px 1fr 1fr 1fr",
-            gap: 10,
-            alignItems: "center",
-            padding: "10px 12px",
-            borderRadius: 14,
-            border: "1px solid var(--stroke)",
-            background: "rgba(255,255,255,0.04)",
-          }}
-        >
-          <div style={{ fontWeight: 700 }}>{r.symbol}</div>
-          <div style={{ color: "var(--muted)", fontSize: 12 }}>Normal {fmtPct(r.normal)}</div>
-          <div style={{ color: "var(--muted)", fontSize: 12 }}>Stress {fmtPct(r.stress)}</div>
-          <div style={{ fontWeight: 700 }}>
-            {r.delta >= 0 ? "+" : ""}
-            {fmtPct(r.delta)}
-          </div>
-        </div>
-      ))}
+<div className="space-y-2">
+  {rows.map((r) => (
+    <div
+      key={r.symbol}
+      className="grid grid-cols-[70px_1fr] items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 sm:grid-cols-[70px_1fr_1fr_1fr]"
+    >
+      {/* Symbol */}
+      <div className="font-semibold">{r.symbol}</div>
+
+      {/* Delta (always visible) */}
+      <div className="font-semibold">
+        {(r.delta >= 0 ? "+" : "") + fmtPct(r.delta)}
+        <span className="ml-2 text-xs text-white/60 sm:hidden">Δ risk share</span>
+      </div>
+
+      {/* Normal/Stress hidden on mobile */}
+      <div className="hidden text-xs text-white/60 sm:block">
+        Normal {fmtPct(r.normal)}
+      </div>
+      <div className="hidden text-xs text-white/60 sm:block">
+        Stress {fmtPct(r.stress)}
+      </div>
     </div>
+  ))}
+</div>
+
   );
 }
