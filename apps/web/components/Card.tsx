@@ -4,7 +4,7 @@ export function Card({
   children,
   className = "",
 }: {
-  title?: string;
+  title?: React.ReactNode;
   right?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
@@ -13,12 +13,11 @@ export function Card({
     <section className={`surface rounded-2xl p-4 sm:p-5 ${className}`}>
       {(title || right) && (
         <div className="mb-4 flex items-center justify-between gap-4">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-white/60">
-            {title}
-          </div>
+          <div>{title}</div>
           <div className="text-xs text-white/60">{right}</div>
         </div>
       )}
+
       {children}
     </section>
   );

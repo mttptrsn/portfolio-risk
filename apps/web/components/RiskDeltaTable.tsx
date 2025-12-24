@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
+import { HelpLabel } from "./HelpLabel";
+
 
 type Asset = { symbol: string; weight: number; riskShare: number; mcr: number };
 
@@ -43,6 +45,17 @@ export function RiskDeltaTable({
 
   return (
 <div className="space-y-2">
+  <div className="mb-2 grid grid-cols-[70px_1fr] gap-3 px-1 sm:grid-cols-[70px_1fr_1fr_1fr]">
+  <HelpLabel label="Symbol" content={<>Ticker / instrument identifier.</>} />
+  <HelpLabel label="Δ Risk Share" content={<>Stress risk share minus Normal risk share.</>} />
+  <div className="hidden sm:block">
+    <HelpLabel label="Normal" content={<>Risk share under the trailing (normal) window.</>} />
+  </div>
+  <div className="hidden sm:block">
+    <HelpLabel label="Stress" content={<>Risk share under the max realized volatility window.</>} />
+  </div>
+</div>
+
   {rows.map((r) => (
     <div
       key={r.symbol}
